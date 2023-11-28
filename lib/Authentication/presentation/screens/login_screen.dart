@@ -1,13 +1,16 @@
 import 'package:ecommerce_app/App/presentation/controller/app_cubit.dart';
 import 'package:ecommerce_app/App/presentation/layout/home_layout.dart';
+import 'package:ecommerce_app/Authentication/presentation/components/divider_widget.dart';
 import 'package:ecommerce_app/Authentication/presentation/components/password_text_field.dart';
 import 'package:ecommerce_app/App/presentation/components/snackbar_message.dart';
 import 'package:ecommerce_app/Authentication/domain/usecases/login.dart';
+import 'package:ecommerce_app/Authentication/presentation/components/signin_button.dart';
 import 'package:ecommerce_app/Authentication/presentation/controller/auth_cubit.dart';
 import 'package:ecommerce_app/Core/utils/methods/navigate_and_finish.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginScreen extends HookWidget {
   const LoginScreen({super.key});
@@ -62,12 +65,20 @@ class LoginScreen extends HookWidget {
                       },
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 15,
                     ),
                     PasswordTextField(
                       controller: passwordController,
                     ),
-                    const SizedBox(height: 25),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text("نسيت كلمة المرور؟"),
+                        ),
+                      ],
+                    ),
                     BlocConsumer<AuthenticationCubit, AuthenticationState>(
                       builder: (context, state) {
                         if (state is LoginLoadingState) {
@@ -102,17 +113,66 @@ class LoginScreen extends HookWidget {
                               context: context,
                               message: authCubit.loginMessage);
                         } else if (state is LoginSuccessState) {
+                          final appCubit = AppCubit.get(context);
+                          final authCubit = AuthenticationCubit.get(context);
                           SnackbarMessage().showSuccessSnackBar(
                             context: context,
                             message: "تم تسجيل الدخول بنجاح",
                           );
-                          AppCubit.get(context).changeCurrentIndex(0);
+                          appCubit.changeCurrentIndex(0);
+                          appCubit.saveAccessToken(
+                              authCubit.loginUser!.data.accessToken);
+                          appCubit.saveRefreshToken(
+                              authCubit.loginUser!.data.refreshToken);
                           navigateAndFinish(
                             context,
                             const HomeLayout(),
                           );
                         }
                       },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text("انشاء حساب"),
+                        ),
+                        const Text(
+                          "ليس لديك حساب ؟",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DividerWidget(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text(
+                            "او",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        DividerWidget()
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SignInButton(
+                      icon: FontAwesomeIcons.google,
+                      title: "تسجيل الدخول باستخدام جوجل",
+                      onPressed: () {},
+                      backgroundColor: Colors.red,
+                    ),
+                    SignInButton(
+                      icon: FontAwesomeIcons.facebook,
+                      title: "تسجيل الدخول باستخدام فيسبوك",
+                      onPressed: () {},
                     ),
                   ],
                 ),

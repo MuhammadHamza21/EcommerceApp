@@ -24,15 +24,25 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => sl<AuthenticationCubit>()),
         BlocProvider(create: (context) => sl<StoreCubit>()),
-        BlocProvider(create: (context) => sl<AppCubit>()),
+        BlocProvider(
+            create: (context) => sl<AppCubit>()
+              ..getAccessToken()
+              ..getRefreshToken()),
         BlocProvider(create: (context) => sl<CartCubit>()),
       ],
-      child: MaterialApp(
-        title: 'Material App',
-        theme: lightTheme,
-        debugShowCheckedModeBanner: false,
-        // home: const LoginScreen(),
-        home: const HomeLayout(),
+      child: BlocBuilder<AppCubit, AppState>(
+        builder: (context, state) {
+          final appCubit = AppCubit.get(context);
+          return MaterialApp(
+            title: 'Material App',
+            theme: lightTheme,
+            debugShowCheckedModeBanner: false,
+            home: appCubit.accessToken.isNotEmpty &&
+                    appCubit.refreshToken.isNotEmpty
+                ? const HomeLayout()
+                : const LoginScreen(),
+          );
+        },
       ),
     );
   }

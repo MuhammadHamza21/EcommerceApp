@@ -1,9 +1,12 @@
 import 'dart:async';
 
-import 'package:ecommerce_app/App/data/data_source/app_data_source.dart';
+import 'package:ecommerce_app/App/data/data_source/app_local_data_source.dart';
+import 'package:ecommerce_app/App/data/data_source/app_remote_data_source.dart';
 import 'package:ecommerce_app/App/data/repository/app_repository.dart';
 import 'package:ecommerce_app/App/domain/repository/base_app_repository.dart';
 import 'package:ecommerce_app/App/domain/usecases/get_connection_status.dart';
+import 'package:ecommerce_app/App/domain/usecases/get_saved_value.dart';
+import 'package:ecommerce_app/App/domain/usecases/save_value.dart';
 import 'package:ecommerce_app/App/presentation/controller/app_cubit.dart';
 import 'package:ecommerce_app/Authentication/data/data_source/auth_remote_datasource.dart';
 import 'package:ecommerce_app/Authentication/data/repository/auth_repository.dart';
@@ -33,7 +36,7 @@ class ServiceLocator {
     // Bloc
     sl.registerFactory(() => AuthenticationCubit(sl()));
     sl.registerFactory(() => StoreCubit(sl(), sl()));
-    sl.registerFactory(() => AppCubit(sl()));
+    sl.registerFactory(() => AppCubit(sl(), sl(), sl()));
     sl.registerFactory(() => CartCubit());
     // Repositories
     sl.registerLazySingleton<BaseAuthRepository>(
@@ -44,8 +47,13 @@ class ServiceLocator {
         baseStoreRemoteDatasource: sl(), baseNetworkInfo: sl()));
     sl.registerLazySingleton<BaseCartRepository>(() =>
         CartRepository(baseCartRemoteDatasource: sl(), baseNetworkInfo: sl()));
-    sl.registerLazySingleton<BaseAppRepository>(() =>
-        AppRepository(baseNetworkInfo: sl(), baseAppRemoteDatasource: sl()));
+    sl.registerLazySingleton<BaseAppRepository>(
+      () => AppRepository(
+        baseNetworkInfo: sl(),
+        baseAppRemoteDatasource: sl(),
+        baseAppLocalDatasource: sl(),
+      ),
+    );
     // Datasource
     sl.registerLazySingleton<BaseAuthRemoteDatasource>(
         () => AuthRemoteDatasource());
@@ -55,6 +63,8 @@ class ServiceLocator {
         () => CartRemoteDatasource());
     sl.registerLazySingleton<BaseAppRemoteDatasource>(
         () => AppRemoteDatasource());
+    sl.registerLazySingleton<BaseAppLocalDatasource>(
+        () => AppLocalDatasource());
     // Usecases
     sl.registerLazySingleton(() => LoginUsecase(baseAuthRepository: sl()));
     sl.registerLazySingleton(
@@ -63,6 +73,9 @@ class ServiceLocator {
         () => GetPopularProductsUsecase(baseStoreRepository: sl()));
     sl.registerLazySingleton(
         () => GetConnectionStatusUsecase(baseAppRepository: sl()));
+    sl.registerLazySingleton(
+        () => GetSavedValueUsecase(baseAppRepository: sl()));
+    sl.registerLazySingleton(() => SaveValueUsecase(baseAppRepository: sl()));
     // external
     await DioHelper.init();
     await CacheHelper.init();

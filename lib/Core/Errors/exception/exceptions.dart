@@ -12,3 +12,10 @@ class OfflineException implements Exception {
     required this.message,
   });
 }
+
+class LocalException implements Exception {
+  final String message;
+  LocalException({
+    required this.message,
+  });
+}

@@ -72,7 +72,7 @@ class HomeLayout extends StatelessWidget {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.category,
+                  Icons.grid_view_rounded,
                 ),
                 label: "Categories",
               ),
