@@ -7,11 +7,16 @@ import 'package:ecommerce_app/Core/Services/service_locator.dart';
 import 'package:ecommerce_app/Core/Themes/app_themes/light_theme.dart';
 import 'package:ecommerce_app/store/presentation/controller/store_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ServiceLocator.init();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 
