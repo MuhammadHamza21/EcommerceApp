@@ -28,6 +28,12 @@ class ProductWidget extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               child: Image.network(
                 ApiConstants.kMedia + product.images[0].toString(),
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  );
+                },
               ),
             ),
             Positioned(
