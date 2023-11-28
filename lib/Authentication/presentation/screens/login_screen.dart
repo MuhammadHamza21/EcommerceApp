@@ -1,7 +1,10 @@
-import 'package:ecommerce_app/App/presentation/components/password_text_field.dart';
+import 'package:ecommerce_app/App/presentation/controller/app_cubit.dart';
+import 'package:ecommerce_app/App/presentation/layout/home_layout.dart';
+import 'package:ecommerce_app/Authentication/presentation/components/password_text_field.dart';
 import 'package:ecommerce_app/App/presentation/components/snackbar_message.dart';
 import 'package:ecommerce_app/Authentication/domain/usecases/login.dart';
 import 'package:ecommerce_app/Authentication/presentation/controller/auth_cubit.dart';
+import 'package:ecommerce_app/Core/utils/methods/navigate_and_finish.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -102,6 +105,11 @@ class LoginScreen extends HookWidget {
                           SnackbarMessage().showSuccessSnackBar(
                             context: context,
                             message: "تم تسجيل الدخول بنجاح",
+                          );
+                          AppCubit.get(context).changeCurrentIndex(0);
+                          navigateAndFinish(
+                            context,
+                            const HomeLayout(),
                           );
                         }
                       },
